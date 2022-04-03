@@ -23,14 +23,14 @@ func main() {
     log.Print(err)
   }
 
-  IPAddr, NWAddr, BCAddr := calc.CalcSubnet(readText)
+  mySubnet := calc.CalcSubnet(readText)
 
   myApp := app.New()
   myWindow := myApp.NewWindow("Subnet Calculator")
 
   IPAddrBound := binding.NewString()
-  if IPAddr != nil {
-    IPAddrBound.Set(IPAddr.String())
+  if mySubnet.Addr != nil {
+    IPAddrBound.Set(mySubnet.Addr.String())
     IPAddrEntry = widget.NewEntryWithData(IPAddrBound)
   } else {
     IPAddrEntry = widget.NewEntry()
@@ -38,8 +38,8 @@ func main() {
   IPAddrLabel := widget.NewLabel("IP Address")
 
   NWAddrBound := binding.NewString()
-  if NWAddr != nil {
-    NWAddrBound.Set(NWAddr.String())
+  if mySubnet.Net.IP != nil {
+    NWAddrBound.Set(mySubnet.Net.IP.String())
     NWAddrEntry = widget.NewEntryWithData(NWAddrBound)
   } else {
     NWAddrEntry = widget.NewEntry()
@@ -47,8 +47,8 @@ func main() {
   NWAddrLabel := widget.NewLabel("Network Address")
 
   BCAddrBound := binding.NewString()
-  if BCAddr != nil {
-    BCAddrBound.Set(BCAddr.String())
+  if mySubnet.BCAddr != nil {
+    BCAddrBound.Set(mySubnet.BCAddr.String())
     BCAddrEntry = widget.NewEntryWithData(BCAddrBound)
   } else {
     BCAddrEntry = widget.NewEntry()

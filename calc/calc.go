@@ -8,25 +8,30 @@ import (
   "subnet_calculator/utils"
 )
 
+type Subnet struct {
+  Addr net.IP
+  Net *net.IPNet
+  BCAddr net.IP
+}
+
 /*
 Calculate informations about given subnet
 */
-func CalcSubnet(str string) (net.IP, net.IP, net.IP) {
-  var IPAddr, NWAddr, BCAddr net.IP
-  var IPNet *net.IPNet
+func CalcSubnet(str string) Subnet {
+  var mySubnet Subnet
+
   var err error
 
   if strings.Contains(str, "/") {
-    IPAddr, IPNet, err = net.ParseCIDR(str)
+    mySubnet.Addr, mySubnet.Net, err = net.ParseCIDR(str)
     if err != nil {
       log.Fatal(err)
     }
-    NWAddr = IPNet.IP
-    BCAddr = CalcBCAddr(NWAddr, IPNet.Mask)
+    mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else if strings.Contains(str, " ") {
     splitText := strings.Split(str, " ")
-    IPAddr = net.ParseIP(splitText[0])
-    if IPAddr == nil {
+    mySubnet.Addr = net.ParseIP(splitText[0])
+    if mySubnet.Addr == nil {
       log.Fatal("Wrong IP address notation")
     }
     strMask := strings.Split(splitText[1], ".")
@@ -34,23 +39,24 @@ func CalcSubnet(str string) (net.IP, net.IP, net.IP) {
                          utils.AtoByte(strMask[0]),
                          utils.AtoByte(strMask[2]),
                          utils.AtoByte(strMask[3]))
-    NWAddr = IPAddr.Mask(mask)
-    BCAddr = CalcBCAddr(NWAddr, mask)
+    mySubnet.Net = &net.IPNet{IP: mySubnet.Addr.Mask(mask),
+                              Mask: mask}
+    mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else {
   }
 
-  return IPAddr, NWAddr, BCAddr
+  return mySubnet
 
 }
 
 /*
-Calculate a broadcast address
+Calculate a broadcast address from network address and its subnet mask
 */
-func CalcBCAddr(addr net.IP, mask net.IPMask) net.IP {
+func CalcBCAddr(mySubnet Subnet) net.IP {
   BCAddr := make([]byte, 4)
-  copy(BCAddr, addr)
-  for i, octet := range(addr) {
-    BCAddr[i] = octet | ^mask[i]
+  copy(BCAddr, mySubnet.Net.IP)
+  for i, octet := range(mySubnet.Net.IP) {
+    BCAddr[i] = octet | ^mySubnet.Net.Mask[i]
   }
 
   return BCAddr
