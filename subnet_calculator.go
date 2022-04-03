@@ -8,6 +8,7 @@ import (
   "fyne.io/fyne/v2/app"
   "fyne.io/fyne/v2/container"
   "fyne.io/fyne/v2/data/binding"
+  "fyne.io/fyne/v2/layout"
   "fyne.io/fyne/v2/widget"
   "github.com/atotto/clipboard"
 
@@ -34,10 +35,7 @@ func main() {
   } else {
     IPAddrEntry = widget.NewEntry()
   }
-  IPAddrContainer := container.NewHBox(
-    widget.NewLabel("IP Address"),
-    IPAddrEntry,
-  )
+  IPAddrLabel := widget.NewLabel("IP Address")
 
   NWAddrBound := binding.NewString()
   if NWAddr != nil {
@@ -46,10 +44,7 @@ func main() {
   } else {
     NWAddrEntry = widget.NewEntry()
   }
-  NWAddrContainer := container.NewHBox(
-    widget.NewLabel("Network Address"),
-    NWAddrEntry,
-  )
+  NWAddrLabel := widget.NewLabel("Network Address")
 
   BCAddrBound := binding.NewString()
   if BCAddr != nil {
@@ -58,16 +53,13 @@ func main() {
   } else {
     BCAddrEntry = widget.NewEntry()
   }
-  BCAddrContainer := container.NewHBox(
-    widget.NewLabel("Network Address"),
-    BCAddrEntry,
-  )
+  BCAddrLabel := widget.NewLabel("Broadcast Address")
 
-  myWindow.SetContent(container.NewVBox(
-    IPAddrContainer,
-    NWAddrContainer,
-    BCAddrContainer,
-  ))
+  grid := container.New(layout.NewFormLayout(), 
+                        IPAddrLabel, IPAddrEntry,
+			NWAddrLabel, NWAddrEntry,
+			BCAddrLabel, BCAddrEntry)
+  myWindow.SetContent(grid)
 
   myWindow.Resize(fyne.NewSize(500, 100))
   myWindow.ShowAndRun()
