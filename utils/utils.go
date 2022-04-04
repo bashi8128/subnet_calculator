@@ -85,6 +85,8 @@ func CalcSubnet(str string) Subnet {
 
   var err error
 
+  str = strings.TrimRight(str, "\n")
+
   if strings.Contains(str, "/") {
     mySubnet.Addr, mySubnet.Net, err = net.ParseCIDR(str)
     if err != nil {
@@ -109,7 +111,6 @@ func CalcSubnet(str string) Subnet {
   }
 
   return mySubnet
-
 }
 
 /*
