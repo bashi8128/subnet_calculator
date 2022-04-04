@@ -93,8 +93,8 @@ func CalcSubnet(str string) Subnet {
       log.Fatal(err)
     }
     mySubnet.BCAddr = CalcBCAddr(mySubnet)
-  } else if strings.Contains(str, " ") {
-    splitText := strings.Split(str, " ")
+  } else if strings.ContainsAny(str, " '\t'") {
+    splitText := strings.Fields(str)
     mySubnet.Addr = net.ParseIP(splitText[0])
     if mySubnet.Addr == nil {
       log.Fatal("Wrong IP address notation")
