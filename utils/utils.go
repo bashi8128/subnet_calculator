@@ -101,7 +101,7 @@ func CalcSubnet(str string) Subnet {
     }
     strMask := strings.Split(splitText[1], ".")
     mask := net.IPv4Mask(AtoByte(strMask[0]), 
-                         AtoByte(strMask[0]),
+                         AtoByte(strMask[1]),
                          AtoByte(strMask[2]),
                          AtoByte(strMask[3]))
     mySubnet.Net = &net.IPNet{IP: mySubnet.Addr.Mask(mask),
