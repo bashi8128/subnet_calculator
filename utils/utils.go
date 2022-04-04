@@ -118,7 +118,6 @@ Calculate a broadcast address from network address and its subnet mask
 */
 func CalcBCAddr(mySubnet Subnet) net.IP {
   BCAddr := make([]byte, 4)
-  copy(BCAddr, mySubnet.Net.IP)
   for i, octet := range(mySubnet.Net.IP) {
     BCAddr[i] = octet | ^mySubnet.Net.Mask[i]
   }
