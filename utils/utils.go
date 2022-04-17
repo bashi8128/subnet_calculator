@@ -108,6 +108,7 @@ func CalcSubnet(str string) Subnet {
                               Mask: mask}
     mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else {
+    log.Fatal("Invalid format in clipboard")
   }
 
   return mySubnet
