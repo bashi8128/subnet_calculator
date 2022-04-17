@@ -26,7 +26,7 @@ Interpret strings and convert them into corresponding values with type byte
 func AtoByte(str string) byte {
   octet, err := strconv.Atoi(str)
   if err != nil {
-    log.Fatal("Failed to convert string into byte.")
+    log.Print("Failed to convert string into byte.")
   }
   return byte(octet)
 }
@@ -89,12 +89,12 @@ func CreateCalculator(mySubnet Subnet) {
 				   var err error
 				   IPAddr, err = IPAddrBound.Get()
 				   if err != nil {
-				     log.Fatal(err)
+				     log.Print(err)
 				   }
 
 				   Subnet, err = SubnetBound.Get()
 				   if err != nil {
-				     log.Fatal(err)
+				     log.Print(err)
 				   }
 				   mask := ExtractMask(IPAddr + "/" + Subnet)
 				   mySubnet := CalcSubnet(mask)
@@ -127,14 +127,14 @@ func CalcSubnet(str string) Subnet {
   if strings.Contains(str, "/") {
     mySubnet.Addr, mySubnet.Net, err = net.ParseCIDR(str)
     if err != nil {
-      log.Fatal(err)
+      log.Print(err)
     }
     mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else if strings.ContainsAny(str, " '\t'") {
     splitText := strings.Fields(str)
     mySubnet.Addr = net.ParseIP(splitText[0])
     if mySubnet.Addr == nil {
-      log.Fatal("Wrong IP address notation")
+      log.Print("Wrong IP address notation")
     }
     strMask := strings.Split(splitText[1], ".")
     mask := net.IPv4Mask(AtoByte(strMask[0]), 
@@ -145,7 +145,7 @@ func CalcSubnet(str string) Subnet {
                               Mask: mask}
     mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else {
-    log.Fatal("Invalid format in clipboard")
+    log.Print("Invalid format in clipboard")
   }
 
   return mySubnet
