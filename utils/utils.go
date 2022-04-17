@@ -36,6 +36,7 @@ Create window of subnet calculator with information of subnet
 */
 func CreateCalculator(mySubnet Subnet) {
   var IPAddrEntry, NWAddrEntry, BCAddrEntry *widget.Entry
+  var SubnetEntry  *widget.SelectEntry
 
   myApp := app.New()
   myWindow := myApp.NewWindow("Subnet Calculator")
@@ -48,6 +49,15 @@ func CreateCalculator(mySubnet Subnet) {
     IPAddrEntry = widget.NewEntry()
   }
   IPAddrLabel := widget.NewLabel("IP Address")
+
+  SubnetEntry = widget.NewSelectEntry(subnets)
+  if mySubnet.Net.Mask != nil {
+    SubnetBound := binding.NewString()
+    ones, _ := mySubnet.Net.Mask.Size()
+    SubnetBound.Set(subnets[ones - 1])
+    SubnetEntry.Bind(SubnetBound)
+  }
+  SubnetLabel := widget.NewLabel("Subnet")
 
   NWAddrBound := binding.NewString()
   if mySubnet.Net.IP != nil {
@@ -69,6 +79,7 @@ func CreateCalculator(mySubnet Subnet) {
 
   grid := container.New(layout.NewFormLayout(), 
                         IPAddrLabel, IPAddrEntry,
+			SubnetLabel, SubnetEntry,
 			NWAddrLabel, NWAddrEntry,
 			BCAddrLabel, BCAddrEntry)
   myWindow.SetContent(grid)
@@ -125,3 +136,5 @@ func CalcBCAddr(mySubnet Subnet) net.IP {
 
   return BCAddr
 }
+
+//func parseSubnet(subnet string)

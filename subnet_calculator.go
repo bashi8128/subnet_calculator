@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
   readText, err := clipboard.ReadAll()
 
   if err != nil {
