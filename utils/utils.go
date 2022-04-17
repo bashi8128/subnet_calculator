@@ -36,46 +36,43 @@ Create window of subnet calculator with information of subnet
 */
 func CreateCalculator(mySubnet Subnet) {
   var IPAddrEntry, NWAddrEntry, BCAddrEntry *widget.Entry
-  var SubnetEntry  *widget.SelectEntry
+  var SubnetEntry  *widget.SelectEntry = widget.NewSelectEntry(subnets)
 
   myApp := app.New()
   myWindow := myApp.NewWindow("Subnet Calculator")
 
+  // Define labels for forms
+  IPAddrLabel := widget.NewLabel("IP Address")
+  SubnetLabel := widget.NewLabel("Subnet")
+  NWAddrLabel := widget.NewLabel("Network Address")
+  BCAddrLabel := widget.NewLabel("Broadcast Address")
+
+  // Define binding for each forms
   IPAddrBound := binding.NewString()
+  SubnetBound := binding.NewString()
+  NWAddrBound := binding.NewString()
+  BCAddrBound := binding.NewString()
+
   if mySubnet.Addr != nil {
     IPAddrBound.Set(mySubnet.Addr.String())
-    IPAddrEntry = widget.NewEntryWithData(IPAddrBound)
-  } else {
-    IPAddrEntry = widget.NewEntry()
   }
-  IPAddrLabel := widget.NewLabel("IP Address")
-
-  SubnetBound := binding.NewString()
-  SubnetEntry = widget.NewSelectEntry(subnets)
+  IPAddrEntry = widget.NewEntryWithData(IPAddrBound)
+  
   if mySubnet.Net != nil {
     ones, _ := mySubnet.Net.Mask.Size()
     SubnetBound.Set(subnets[ones - 1])
-    SubnetEntry.Bind(SubnetBound)
   }
-  SubnetLabel := widget.NewLabel("Subnet")
+  SubnetEntry.Bind(SubnetBound)
 
-  NWAddrBound := binding.NewString()
   if mySubnet.Net != nil {
     NWAddrBound.Set(mySubnet.Net.IP.String())
-    NWAddrEntry = widget.NewEntryWithData(NWAddrBound)
-  } else {
-    NWAddrEntry = widget.NewEntry()
   }
-  NWAddrLabel := widget.NewLabel("Network Address")
+  NWAddrEntry = widget.NewEntryWithData(NWAddrBound)
 
-  BCAddrBound := binding.NewString()
   if mySubnet.BCAddr != nil {
     BCAddrBound.Set(mySubnet.BCAddr.String())
-    BCAddrEntry = widget.NewEntryWithData(BCAddrBound)
-  } else {
-    BCAddrEntry = widget.NewEntry()
   }
-  BCAddrLabel := widget.NewLabel("Broadcast Address")
+  BCAddrEntry = widget.NewEntryWithData(BCAddrBound)
 
   grid := container.New(layout.NewFormLayout(), 
                         IPAddrLabel, IPAddrEntry,
