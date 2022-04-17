@@ -73,7 +73,7 @@ func CreateCalculator(mySubnet Subnet) {
 			BCAddrLabel, BCAddrEntry)
   myWindow.SetContent(grid)
 
-  myWindow.Resize(fyne.NewSize(500, 100))
+  myWindow.Resize(fyne.NewSize(500, 400))
   myWindow.ShowAndRun()
 }
 
