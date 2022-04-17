@@ -50,9 +50,9 @@ func CreateCalculator(mySubnet Subnet) {
   }
   IPAddrLabel := widget.NewLabel("IP Address")
 
+  SubnetBound := binding.NewString()
   SubnetEntry = widget.NewSelectEntry(subnets)
   if mySubnet.Net.Mask != nil {
-    SubnetBound := binding.NewString()
     ones, _ := mySubnet.Net.Mask.Size()
     SubnetBound.Set(subnets[ones - 1])
     SubnetEntry.Bind(SubnetBound)
@@ -83,7 +83,24 @@ func CreateCalculator(mySubnet Subnet) {
 			NWAddrLabel, NWAddrEntry,
 			BCAddrLabel, BCAddrEntry)
 
-  CalcButton := widget.NewButton("Execute calculation", func(){log.Println("pressed")})
+  CalcButton := widget.NewButton("Execute calculation",
+                                 func(){
+				   var IPAddr, Subnet string
+				   var err error
+				   IPAddr, err = IPAddrBound.Get()
+				   if err != nil {
+				     log.Fatal(err)
+				   }
+
+				   Subnet, err = SubnetBound.Get()
+				   if err != nil {
+				     log.Fatal(err)
+				   }
+				   mask := ExtractMask(IPAddr + "/" + Subnet)
+				   mySubnet := CalcSubnet(mask)
+				   NWAddrBound.Set(mySubnet.Net.IP.String())
+				   BCAddrBound.Set(mySubnet.BCAddr.String())
+                                 })
 
   button := container.New(layout.NewCenterLayout(), CalcButton)
 
@@ -132,6 +149,14 @@ func CalcSubnet(str string) Subnet {
   }
 
   return mySubnet
+}
+
+/*
+Extract bit length of subnet mask from string like 24(255.255.255.0) into IPMask
+*/
+func ExtractMask(subnet string) string {
+  SubnetString := strings.Split(subnet, "(")
+  return SubnetString[0]
 }
 
 /*
