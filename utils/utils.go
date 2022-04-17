@@ -52,7 +52,7 @@ func CreateCalculator(mySubnet Subnet) {
 
   SubnetBound := binding.NewString()
   SubnetEntry = widget.NewSelectEntry(subnets)
-  if mySubnet.Net.Mask != nil {
+  if mySubnet.Net != nil {
     ones, _ := mySubnet.Net.Mask.Size()
     SubnetBound.Set(subnets[ones - 1])
     SubnetEntry.Bind(SubnetBound)
@@ -60,7 +60,7 @@ func CreateCalculator(mySubnet Subnet) {
   SubnetLabel := widget.NewLabel("Subnet")
 
   NWAddrBound := binding.NewString()
-  if mySubnet.Net.IP != nil {
+  if mySubnet.Net != nil {
     NWAddrBound.Set(mySubnet.Net.IP.String())
     NWAddrEntry = widget.NewEntryWithData(NWAddrBound)
   } else {
