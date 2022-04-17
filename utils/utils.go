@@ -82,7 +82,16 @@ func CreateCalculator(mySubnet Subnet) {
 			SubnetLabel, SubnetEntry,
 			NWAddrLabel, NWAddrEntry,
 			BCAddrLabel, BCAddrEntry)
-  myWindow.SetContent(grid)
+
+  CalcButton := widget.NewButton("Execute calculation", func(){log.Println("pressed")})
+
+  button := container.New(layout.NewCenterLayout(), CalcButton)
+
+  wrapperContainer := container.New(layout.NewVBoxLayout(),
+                                    grid,
+				    button)
+
+  myWindow.SetContent(wrapperContainer)
 
   myWindow.Resize(fyne.NewSize(500, 400))
   myWindow.ShowAndRun()
