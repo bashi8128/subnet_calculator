@@ -110,7 +110,7 @@ func CreateCalculator(mySubnet Subnet) {
 
   myWindow.SetContent(wrapperContainer)
 
-  myWindow.Resize(fyne.NewSize(500, 400))
+  myWindow.Resize(fyne.NewSize(500, 200))
   myWindow.ShowAndRun()
 }
 
