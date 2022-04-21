@@ -1,6 +1,7 @@
 package utils
 
 import (
+  "errors"
   "strconv"
   "log"
   "net"
@@ -47,7 +48,7 @@ func CreateCalculator(mySubnet Subnet) {
   NWAddrLabel := widget.NewLabel("Network Address")
   BCAddrLabel := widget.NewLabel("Broadcast Address")
 
-  // Define binding for each forms
+  // Define bindings for each form
   IPAddrBound := binding.NewString()
   SubnetBound := binding.NewString()
   NWAddrBound := binding.NewString()
@@ -60,7 +61,9 @@ func CreateCalculator(mySubnet Subnet) {
   
   if mySubnet.Net != nil {
     ones, _ := mySubnet.Net.Mask.Size()
-    SubnetBound.Set(subnets[ones - 1])
+    if ones > 0 {
+      SubnetBound.Set(subnets[ones - 1])
+    }
   }
   SubnetEntry.Bind(SubnetBound)
 
@@ -116,7 +119,7 @@ Calculate informations about given subnet
 */
 func CalcSubnet(str string) Subnet {
   var mySubnet Subnet
-
+  var mask []byte
   var err error
 
   str = strings.TrimRight(str, "\n")
@@ -125,8 +128,9 @@ func CalcSubnet(str string) Subnet {
     mySubnet.Addr, mySubnet.Net, err = net.ParseCIDR(str)
     if err != nil {
       log.Print(err)
+    } else {
+      mySubnet.BCAddr = CalcBCAddr(mySubnet)
     }
-    mySubnet.BCAddr = CalcBCAddr(mySubnet)
   } else if strings.ContainsAny(str, " '\t'") {
     splitText := strings.Fields(str)
     mySubnet.Addr = net.ParseIP(splitText[0])
@@ -134,13 +138,18 @@ func CalcSubnet(str string) Subnet {
       log.Print("Wrong IP address notation")
     }
     strMask := strings.Split(splitText[1], ".")
-    mask := net.IPv4Mask(AtoByte(strMask[0]), 
-                         AtoByte(strMask[1]),
-                         AtoByte(strMask[2]),
-                         AtoByte(strMask[3]))
-    mySubnet.Net = &net.IPNet{IP: mySubnet.Addr.Mask(mask),
-                              Mask: mask}
-    mySubnet.BCAddr = CalcBCAddr(mySubnet)
+
+    if len(strMask) == 4 {
+      mask = net.IPv4Mask(AtoByte(strMask[0]), 
+                          AtoByte(strMask[1]),
+                          AtoByte(strMask[2]),
+                          AtoByte(strMask[3]))
+      mySubnet.Net = &net.IPNet{IP: mySubnet.Addr.Mask(mask), Mask: mask}
+      mySubnet.BCAddr = CalcBCAddr(mySubnet)
+    } else {
+      err = errors.New("Wrong subnet mask notation")
+      log.Print(err)
+    }
   } else {
     log.Print("Invalid format in clipboard")
   }
@@ -167,5 +176,3 @@ func CalcBCAddr(mySubnet Subnet) net.IP {
 
   return BCAddr
 }
-
-//func parseSubnet(subnet string)
